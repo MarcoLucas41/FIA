@@ -33,6 +33,49 @@ namespace GeneticSharp.Runner.UnityApp.Car
             // HillRoad Distance = 4450
             // RockyHillRoad Distance = 2780
 
+            float trackDistance = 2280;
+
+            if(Distance >= trackDistance/4)
+            {
+                reward = (float)(reward + 0.1);
+            }
+            
+            if(Distance >= trackDistance/2)
+            {
+                reward = (float)(reward + 0.15);
+            }
+            
+            if(Distance >= 0.75*trackDistance)
+            {
+                reward = (float)(reward + 0.1);
+            }
+
+            // uma parte que valoriza chegar À meta/ completar uma corrida
+
+            if(RoadCompleted == 1)
+            {
+                // DAR RECOMPENSA
+                reward = (float)(reward + 0.3);
+            }
+            fitness = (float)(fitness + reward*fitness);  
+            return fitness;  
+        }
+
+        public float EnergyEfficientFitness(float Distance, float SumTotalForces, float CarMass,int RoadCompleted)
+        {
+            float fitness; 
+            float reward = 0;
+            if(CarMass == 0 || SumTotalForces == 0)
+            {
+                fitness = 0;
+            } 
+            // a logica não está errada
+            else fitness = (float) Distance/(SumTotalForces/CarMass);
+
+            // GapRoad Distance = 2280
+            // HillRoad Distance = 4450
+            // RockyHillRoad Distance = 2780
+
             float trackDistance = 2780;
 
             if(Distance >= trackDistance/4)
@@ -42,7 +85,7 @@ namespace GeneticSharp.Runner.UnityApp.Car
             
             if(Distance >= trackDistance/2)
             {
-                reward = (float)(reward + 0.1);
+                reward = (float)(reward + 0.15);
             }
             
             if(Distance >= 0.75*trackDistance)
@@ -50,50 +93,18 @@ namespace GeneticSharp.Runner.UnityApp.Car
                 reward = (float)(reward + 0.1);
             }
 
-
             // uma parte que valoriza chegar À meta/ completar uma corrida
 
             if(RoadCompleted == 1)
             {
                 // DAR RECOMPENSA
-                reward = (float)(reward + 0.1);
-            }
-            fitness = (float)(fitness + reward*fitness);  
-            return fitness;  
-        }
-
-        public float EnergyEfficientFitness(float Distance, float SumTotalForces, int RoadCompleted)
-        {
-            float fitness; 
-            float reward = 0;
-            if(SumTotalForces == 0)
-            {
-                fitness = 0;
-            } 
-            // a logica não está errada
-            else fitness = (float) Distance/SumTotalForces;
-
-            // GapRoad Distance = 2280
-            // HillRoad Distance = 4450
-            // RockyHillRoad Distance = 2780
-
-            float trackDistance = 2780;
-
-            if(Distance >= trackDistance/2)
-            {
                 reward = (float)(reward + 0.3);
-            }
-
-            // uma parte que valoriza chegar À meta/ completar uma corrida
-
-            if(RoadCompleted == 1)
-            {
-                // DAR RECOMPENSA
-                reward = (float)(reward + 0.2);
             }
             fitness = (float)(fitness + reward*fitness);   
             return fitness;
         }
+
+
 
         public BlockingCollection<CarChromosome> ChromosomesToBeginEvaluation { get; private set; }
         public BlockingCollection<CarChromosome> ChromosomesToEndEvaluation { get; private set; }
@@ -132,8 +143,8 @@ namespace GeneticSharp.Runner.UnityApp.Car
                 
                 // chegar com o minimo de sumTotalForces
 
-                fitness = FastestFitness(Distance,EllapsedTime,RoadCompleted);
-                //fitness = EnergyEfficientFitness(Distance,SumTotalForces,RoadCompleted);
+                //fitness = FastestFitness(Distance,EllapsedTime,RoadCompleted);
+                fitness = EnergyEfficientFitness(Distance,SumTotalForces,CarMass,RoadCompleted);
                 
 
                 /*END OF YOUR CODE*/
